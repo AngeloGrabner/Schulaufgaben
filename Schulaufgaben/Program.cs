@@ -50,7 +50,7 @@ namespace Porgram
         {
             aufgabe11_1_1();
             aufgabe11_1_4(zahlen);
-            aufgabe11_1_1();
+            aufgabe11_1_1(); //hallo
             Console.ReadLine();
         }   
     }
