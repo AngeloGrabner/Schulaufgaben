@@ -11,6 +11,7 @@ namespace Porgram
             {
                 Console.Write(zahlen[i]+ "\t");
             }
+            Console.WriteLine();
         }
         public static int[] aufgabe11_1_2(int[] input) // 2
         {
@@ -35,16 +36,20 @@ namespace Porgram
             Console.Write("geben sie einene index ein: ");
             int pos = Convert.ToInt32(Console.ReadLine());
 
-            int temp = input[pos];
-            for (int i = 1; i < input.Length; i++)
+            
+            for (int i = pos; i < input.Length-1; i++)
             {
-                input[i - 1] = input[i];
+                input[i] = input[i+1];
             }
-            input[input.Length - 1] = 1;
+
+            Console.WriteLine("geben sie eine zahl ein: ");
+            input[input.Length - 1] = Convert.ToInt32(Console.ReadLine());
             return input;
         }
         public static void Main()
         {
+            aufgabe11_1_1();
+            aufgabe11_1_4(zahlen);
             aufgabe11_1_1();
             Console.ReadLine();
         }   
