@@ -7,9 +7,13 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
     
         public static void Main()
         {
-            int anzahl = 0;
-            anzahl = ausgabeTextMalX("das ist sehr schwer", 10);
-            Console.WriteLine("anzahl der wiederholungen: "+anzahl);
+#pragma warning disable
+            Console.WriteLine("geben sie einen text ein");
+            string text = Console.ReadLine();
+            Console.WriteLine("geben sie die anzahl der wiederholungen ein");
+            int anzahl = int.Parse(Console.ReadLine());
+            anzahl = ausgabeTextMalX(text, anzahl);
+            Console.WriteLine("anzahl der zeichen: "+anzahl);
         }  
         
         public static int ausgabeTextMalX(string text, int wiederholungen)
@@ -18,7 +22,7 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
             {
                 Console.WriteLine(text);
             }
-            return text.Length;
+            return text.Length*wiederholungen;
         }
     }
 }
