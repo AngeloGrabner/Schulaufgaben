@@ -1,0 +1,4 @@
+45;John;Lennon;1;82,46
+23;Paul;McCartney;4;329,84
+3;George;Harrison;12;989,52
+32;Ringo;Starr;3;247,38

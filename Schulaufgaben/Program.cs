@@ -1,28 +1,53 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
 {
+    public struct HotelDaten
+    {
+        public int zimmernummer;
+        public string nachname, vorname;
+        public int übernachtungen;
+        public float rechnung;
+        public HotelDaten(int zimmernummer, string vorname, string nachname, int übernachtungen, float rechnung)
+        {
+            this.rechnung = rechnung;
+            this.nachname = nachname;
+            this.vorname = vorname;
+            this.zimmernummer = zimmernummer;
+            this.übernachtungen = übernachtungen;
+        }
+    }
     class Aufgaben
     {
-    
+        // data
+        const string path = @"Data.txt";
+        static List<HotelDaten> daten = new();
+        static Dictionary<int, HotelDaten> byNumber = new();
+        static Dictionary<string, HotelDaten> byName = new();
         public static void Main()
         {
-#pragma warning disable
-            Console.WriteLine("geben sie einen text ein");
-            string text = Console.ReadLine();
-            Console.WriteLine("geben sie die anzahl der wiederholungen ein");
-            int anzahl = int.Parse(Console.ReadLine());
-            anzahl = ausgabeTextMalX(text, anzahl);
-            Console.WriteLine("anzahl der zeichen: "+anzahl);
-        }  
-        
-        public static int ausgabeTextMalX(string text, int wiederholungen)
+            //gui stuff
+        }
+        static void SetupData()
         {
-            for (int i = 0; i < wiederholungen; i++)
+            string[] fromFile = File.ReadAllLines(path);
+            for (int i = 0, j = 0; i < fromFile.Length; i++)
             {
-                Console.WriteLine(text);
+                while (from[i][j] !=)
+                {
+                    // get into the hoteldaten struct
+                }
             }
-            return text.Length*wiederholungen;
+        }
+        public static Tuple<bool, HotelDaten>GetData(string nachname)
+        {
+
+            return null;
+        }
+        public static Tuple<bool, HotelDaten>GetData(int zimmernummer)
+        {
+
+            return null;
         }
     }
 }
