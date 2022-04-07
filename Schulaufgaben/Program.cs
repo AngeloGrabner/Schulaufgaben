@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
 {
+
     public struct HotelDaten
     {
-        public int zimmernummer;
+        public string zimmernummer; // we'll use string instead of int 
         public string nachname, vorname;
         public int übernachtungen;
         public float rechnung;
-        public HotelDaten(int zimmernummer, string vorname, string nachname, int übernachtungen, float rechnung)
+        public HotelDaten(string zimmernummer, string vorname, string nachname, int übernachtungen, float rechnung)
         {
             this.rechnung = rechnung;
             this.nachname = nachname;
@@ -22,7 +23,9 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
         // data
         const string path = @"..\..\..\Data.txt";
         static List<HotelDaten> daten = new();
-        static Dictionary<int, HotelDaten> byNumber = new();
+        //yes that is a bit useless
+
+        static Dictionary<string, HotelDaten> byNumber = new();
         static Dictionary<string, HotelDaten> byName = new(); // redundance
         public static void Main()
         {
@@ -40,26 +43,28 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
                 bool flag = int.TryParse(inputStr, out inputZimmernummer);
                 if (flag)
                 {
-                    (bool b, HotelDaten? hotelDaten) = GetData(inputZimmernummer);
+                    (bool b, List<HotelDaten>? hotelDaten) = GetData(inputZimmernummer);
                     if (b)
-                    {        
-                        Console.WriteLine($"Zimmernummer: {hotelDaten.Value.zimmernummer}, Vorname: {hotelDaten.Value.vorname}, Nachname: {hotelDaten.Value.nachname}, Übernachtungen: {hotelDaten.Value.übernachtungen}, Rechnung; {hotelDaten.Value.rechnung}");
+                    {     
+                        for (int i = 0; i < hotelDaten.Count; i++)
+                        Console.WriteLine($"Zimmernummer: {hotelDaten[i].zimmernummer}, Vorname: {hotelDaten[i].vorname}, Nachname: {hotelDaten[i].nachname}, Übernachtungen: {hotelDaten[i].übernachtungen}, Rechnung; {hotelDaten[i].rechnung}");
                     }
                     else
                     {
-                        Console.WriteLine("error");
+                        Console.WriteLine("error, die zimmernummer konnte nicht gefunden werden");
                     }
                 }
                 else
                 {
-                    (bool b, HotelDaten? hotelDaten) = GetData(inputStr);
+                    (bool b, List<HotelDaten>? hotelDaten) = GetData(inputStr);
                     if (b)
                     {
-                        Console.WriteLine($"Zimmernummer: {hotelDaten.Value.zimmernummer}, Vorname: {hotelDaten.Value.vorname}, Nachname: {hotelDaten.Value.nachname}, Übernachtungen: {hotelDaten.Value.übernachtungen}, Rechnung; {hotelDaten.Value.rechnung}");
+                        for (int i = 0; i < hotelDaten.Count; i++)
+                        Console.WriteLine($"Zimmernummer: {hotelDaten[i].zimmernummer}, Vorname: {hotelDaten[i].vorname}, Nachname: {hotelDaten[i].nachname}, Übernachtungen: {hotelDaten[i].übernachtungen}, Rechnung; {hotelDaten[i].rechnung}");
                     }
                     else
                     {
-                        Console.WriteLine("error");
+                        Console.WriteLine("error, der name konnte nicht gefunden werden");
                     }
                 }
             } 
@@ -76,7 +81,7 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
                 {
                     if (fromFile[i][j] == ';')
                     {
-                        temp.zimmernummer = Convert.ToInt32(fromFile[i].Substring(first, j-first));
+                        temp.zimmernummer = fromFile[i].Substring(first, j-first);
                         first = j + 1;
                     }
                     else if (fromFile[i][j] == '_')
@@ -93,26 +98,51 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
                     {
                         temp.übernachtungen = Convert.ToInt32(fromFile[i].Substring(first, j-first));
                         first = j + 1;
+                        temp.rechnung = (float)Convert.ToDouble(fromFile[i].Substring(first, fromFile[i].Length - first));
                     }
-                    else if (fromFile[i][j] == '\n')
-                    {
-                        temp.rechnung = (float)Convert.ToDouble(fromFile[i].Substring(first, j-first));
-                        first = j + 1;
-                    }
+                    
+                   
+ 
+                    
                 }
                 daten.Add(temp);
             }
-            for (int i = 0; i < daten.Count; i++)
+            for (int i = 0; i < daten.Count; i++) // the following is patch work
             {
-                byName.Add(daten[i].nachname, daten[i]);
-                byNumber.Add(daten[i].zimmernummer,daten[i]);
+                try
+                {
+                    byName.Add(daten[i].nachname, daten[i]);
+                }
+                catch(ArgumentException)
+                {
+                    HandleDupes.add(daten[i].nachname, false);
+                    byName.Add(daten[i].nachname +"_D"+HandleDupes.getDupesOf(daten[i].nachname, false),daten[i]);
+                }
+                try
+                {
+                    byNumber.Add(daten[i].zimmernummer, daten[i]);
+                }
+                catch (ArgumentException)
+                {
+                    HandleDupes.add(daten[i].zimmernummer, true);
+                    byNumber.Add(daten[i].zimmernummer + "_D" + HandleDupes.getDupesOf(daten[i].zimmernummer, true),daten[i]);
+                }
             }
         }
-        public static Tuple<bool, HotelDaten?>GetData(string nachname)
+        public static Tuple<bool, List<HotelDaten>?>GetData(string nachname)
         {
             try
             {
-                HotelDaten temp = byName[nachname];
+                List<HotelDaten>? temp = new();
+                temp.Add(byName[nachname]);
+                int amountOfDupes = HandleDupes.getDupesOf(nachname, false);
+                if (amountOfDupes != -1)
+                {
+                    for (int i = 1; i <= amountOfDupes; i++)
+                    {
+                        temp.Add(byName[nachname+"_D"+i]);
+                    }
+                }
                 return new(true,temp);
             }
             catch
@@ -121,11 +151,21 @@ namespace Program //link: https://github.com/AngeloGrabner/Schulaufgaben
             }
 
         }
-        public static Tuple<bool, HotelDaten?>GetData(int zimmernummer)
+        public static Tuple<bool, List<HotelDaten>?>GetData(int zimmernummer)
         {
             try
             {
-                HotelDaten temp = byNumber[zimmernummer];
+                HandleDupes.getDupesOf(zimmernummer.ToString(), true);
+                List<HotelDaten>? temp = new();
+                temp.Add(byNumber[zimmernummer.ToString()]);
+                int amountOfDupes = HandleDupes.getDupesOf(zimmernummer.ToString(), true);
+                if (amountOfDupes != -1)
+                {
+                    for (int i = 1; i <= amountOfDupes; i++)
+                    {
+                        temp.Add(byNumber[zimmernummer + "_D" + i]);
+                    }
+                }
                 return new(true, temp);
             }
             catch
